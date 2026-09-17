@@ -10,10 +10,16 @@ def get_current_temperature(city: str) -> str:
     """While passing city name as parameter, we will get the current temperature as string"""
     return f"current temperature in {city} is 27 degree celcious"
 
+@tool
+def get_current_weather(city: str) -> str:
+    """While passing city name as parameter, we will get the current weather as string"""
+    return f"Expecting thunder strome in {city} in a few hours"
+
+
 #nodes
 
 llm = ChatOllama(model="qwen2.5:3b", temperature=0.5)
-llm_with_tools = llm.bind_tools([get_current_temperature])
+llm_with_tools = llm.bind_tools([get_current_temperature, get_current_weather])
 def chat_ai(state: MessagesState):
     response = llm_with_tools.invoke([SystemMessage(content="Respond friendly to the messages") ,*state["messages"]])
     return {"messages": response}
@@ -21,7 +27,7 @@ def chat_ai(state: MessagesState):
 def print_message(state: MessagesState):
     print(f"AI: {state["messages"][-1].content}")
 
-tool_node = ToolNode([get_current_temperature])
+tool_node = ToolNode([get_current_temperature, get_current_weather])
 
 #edges
 graph_builder = StateGraph(MessagesState)
