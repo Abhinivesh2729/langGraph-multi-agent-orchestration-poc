@@ -33,7 +33,8 @@ def chat_node(state: State):
     return {"messages": [response]}
 
 def print_message(state: State):
-    print(f"AI: {state['messages'][-1].content}")
+    print("")
+    #print(f"AI: {state['messages'][-1].content}")
 
 tool_node = ToolNode([get_age])
 
@@ -66,4 +67,5 @@ while True:
     elif(userInput == "/user"):
         userId = int(input("User ID: "))
     else:
-        result = graph.invoke({"messages":[HumanMessage(content=userInput)], "userId": userId}, config={"configurable":{"thread_id": userId}})
+        for chunks, metadata in graph.stream({"messages":[HumanMessage(content=userInput)], "userId": userId}, config={"configurable":{"thread_id": userId}}, stream_mode="messages"):
+            print(chunks.content, end="", flush=True)
